@@ -11,7 +11,7 @@ async function connectProducer() {
 async function publishOrder(order) {
 
     await producer.send({
-        topic: 'order.created',
+        topic: "order.created",
         messages: [{ value: JSON.stringify(order) }]
     });
 

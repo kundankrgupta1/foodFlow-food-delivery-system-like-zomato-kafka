@@ -30,7 +30,7 @@ async function startConsumer() {
             await delay(5000);
             await producer.publishFoodReady({
                 ...order,
-                status: 'READY'
+                status: "READY"
             });
         },
     })

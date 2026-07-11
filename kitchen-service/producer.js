@@ -10,8 +10,12 @@ async function connectProducer() {
 
 async function publishFoodReady(order) {
     await producer.send({
-        topic: 'food.ready',
-        messages: [{ value: JSON.stringify(order) }]
+        topic: "food.ready",
+        messages: [
+            {
+                value: JSON.stringify(order)
+            }
+        ]
     });
     console.log("🍕 Food is Ready");
     console.log('ORDER DETAILS:');

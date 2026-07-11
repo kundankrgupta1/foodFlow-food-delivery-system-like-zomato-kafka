@@ -10,15 +10,24 @@ async function connectProducer() {
 
 async function publishOrderPickedUp(order) {
     await producer.send({
-        topic: ["order.pickedup"],
-        messages: [{ value: JSON.stringify(order) }]
+        topic: "order.pickedup",
+        messages: [
+            {
+                value: JSON.stringify(order)
+            }
+        ]
     });
 }
+
 async function publishOrderDelivered(order) {
     await producer.send({
-        topic: ["order.delivered"],
-        messages: [{ value: JSON.stringify(order) }]
-    })
+        topic: "order.delivered",
+        messages: [
+            {
+                value: JSON.stringify(order)
+            }
+        ]
+    });
 }
 
 export default { connectProducer, publishOrderPickedUp, publishOrderDelivered };

@@ -10,7 +10,7 @@ async function startConsumer() {
     console.log("✅ Billing Consumer Connected");
 
     await consumer.subscribe({
-        topic: 'order.created',
+        topics: ["order.created"],
         fromBeginning: false
     })
 
@@ -19,7 +19,7 @@ async function startConsumer() {
             const order = JSON.parse(message.value.toString());
 
             console.log("===============================");
-            console.log(`Order Received, Generating Invoice...`);
+            console.log("Order Received, Generating Invoice...");
             console.log("===============================");
             generateInvoice(order);
         },

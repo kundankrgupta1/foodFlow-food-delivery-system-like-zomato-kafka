@@ -6,15 +6,16 @@ const app = express();
 
 app.use(express.json());
 
-await producer.connectProducer();
+await producer.init();
 
 app.post("/order", async (req, res) => {
+    const { customerName, items } = req.body;
     try {
         const order = {
             date: new Date().toISOString().split("T")[0],
             orderId: Date.now(),
-            customerName: req.body.customerName,
-            items: req.body.items,
+            customerName,
+            items
         };
 
         await producer.publishOrder(order);

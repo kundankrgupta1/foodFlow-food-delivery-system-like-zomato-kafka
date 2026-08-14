@@ -1,23 +1,43 @@
 import { Partitioners } from "kafkajs";
+import admin from "./admin.js";
 import { kafka } from "./kafka.js";
 
-const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
+class Producer {
 
-async function connectProducer() {
-    await producer.connect();
-    console.log('✅ Order Producer Connected');
-};
+    #producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
+    #topic = 'order.created';
 
-async function publishOrder(order) {
+    async init() {
+        try {
+            await admin.createTopics(this.#topic);
 
-    await producer.send({
-        topic: "order.created",
-        messages: [{ value: JSON.stringify(order) }]
-    });
+            await this.#producer.connect();
+            console.log(`✅ Order Producer Connected & Topic '${this.#topic}' Verified`);
+        } catch (error) {
+            console.error("❌ Failed to initialize Order Producer:", error.message);
+            throw error;
+        }
+    };
 
-    console.log('ORDER DETAILS:');
-    console.log(order);
-    console.log("📤 Order Published");
-};
+    async publishOrder(order) {
+        if (!order) {
+            console.warn("⚠️ Cannot publish an empty or undefined order.");
+            return;
+        };
 
-export default { connectProducer, publishOrder }
+        try {
+            await this.#producer.send({
+                topic: "order.created",
+                messages: [{ value: JSON.stringify(order) }]
+            });
+
+            console.log('ORDER DETAILS:');
+            console.log(order);
+            console.log("📤 Order Published");
+        } catch (error) {
+            console.error("❌ Failed to publish order:", error.message);
+        }
+    }
+}
+
+export default new Producer();

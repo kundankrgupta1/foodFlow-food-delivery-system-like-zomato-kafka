@@ -1,28 +1,33 @@
 import { generateInvoice } from "./invoice.js";
 import { kafka } from "./kafka.js";
 
-const consumer = kafka.consumer({
-    groupId: "billing-group"
-});
+class Consumer {
+    #consumer = kafka.consumer({ groupId: 'billing-group' });
 
-async function startConsumer() {
-    await consumer.connect();
-    console.log("✅ Billing Consumer Connected");
+    async startConsumer() {
+        try {
+            await this.#consumer.connect();
+            console.log("✅ Billing Consumer Connected");
 
-    await consumer.subscribe({
-        topics: ["order.created"],
-        fromBeginning: false
-    })
+            await this.#consumer.subscribe({
+                topics: ["order.created"],
+                fromBeginning: true
+            })
 
-    await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
-            const order = JSON.parse(message.value.toString());
+            await this.#consumer.run({
+                eachMessage: async ({ topic, partition, message }) => {
+                    const order = JSON.parse(message.value.toString());
 
-            console.log("===============================");
-            console.log("Order Received, Generating Invoice...");
-            console.log("===============================");
-            generateInvoice(order);
-        },
-    })
+                    console.log("===============================");
+                    console.log("Order Received, Generating Invoice...");
+                    console.log("===============================");
+                    generateInvoice(order);
+                },
+            })
+        } catch (error) {
+            console.log("Billing Consumer Error:", error.message);
+        }
+    }
 }
-startConsumer().catch((e) => console.log(e));
+
+export default new Consumer();

@@ -1,9 +1,7 @@
 import { kafka } from "./kafka.js";
 import producer from "./producer.js";
 
-const consumer = kafka.consumer({
-    groupId: "kitchen-group"
-});
+const consumer = kafka.consumer({ groupId: "kitchen-group" });
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -24,7 +22,7 @@ async function startConsumer() {
             const order = JSON.parse(message.value.toString());
             console.log("\n===============================");
             console.log("✅ New Order Received");
-            console.log("\n👨‍🍳 Preparing Food...\n");
+            console.log("\n👨‍🍳Preparing Food...\n");
             console.log("===============================");
 
             await delay(5000);
